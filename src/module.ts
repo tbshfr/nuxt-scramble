@@ -7,6 +7,7 @@ import {
   addServerPlugin,
 } from "@nuxt/kit";
 import type { ScramblePattern } from "./runtime/utils/scramble";
+import { generateKey } from "./runtime/utils/scramble";
 
 export interface ModuleOptions {
   // enable/disable module (default: true)
@@ -19,6 +20,8 @@ export interface ModuleOptions {
   attribute?: string;
   // css class added to scrambled elements (default: 'scrambled')
   className?: string;
+  // auto create mailto:/tel: links (default: true) */
+  autoLink?: boolean;
 }
 
 export default defineNuxtModule<ModuleOptions>({
@@ -32,6 +35,7 @@ export default defineNuxtModule<ModuleOptions>({
     patterns: [],
     attribute: "data-scramble",
     className: "scrambled",
+    autoLink: true,
   },
   setup(options, nuxt) {
     const resolver = createResolver(import.meta.url);
@@ -40,12 +44,19 @@ export default defineNuxtModule<ModuleOptions>({
       return;
     }
 
+    // generate a unique key per build for XOR encoding
+    // this makes the encoded strings different for each build (should help against scrapers that get the key one time and try to reuse it later)
+    // this will never help against scrapers that have js enabled
+    const key = generateKey(16);
+
     nuxt.options.runtimeConfig.public.scramble = {
       enabled: options.enabled ?? true,
       defaultPatterns: options.defaultPatterns ?? true,
       patterns: options.patterns ?? [],
       attribute: options.attribute ?? "data-scramble",
       className: options.className ?? "scrambled",
+      key,
+      autoLink: options.autoLink ?? true,
     };
 
     addComponentsDir({

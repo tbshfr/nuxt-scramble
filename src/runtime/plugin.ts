@@ -1,8 +1,9 @@
 import { defineNuxtPlugin, useRuntimeConfig } from "#app";
-import { decode } from "./utils/scramble";
-import type { ScrambleOptions } from "./utils/scramble";
+import { decode, getLinkPrefix, normalizePhone } from "./utils/scramble";
+import type { ScrambleOptions, ScramblePattern } from "./utils/scramble";
 
 // client side plugin to devode scrambled elements after hydration to prevent mismatches
+// creates accessible mailto/tel links when autoLink is enabled
 export default defineNuxtPlugin({
   name: "nuxt-scramble",
   enforce: "post", // run after other plugins
@@ -15,37 +16,62 @@ export default defineNuxtPlugin({
     }
 
     nuxtApp.hook("app:mounted", () => {
-      decodeScrambledElements(options.attribute);
+      decodeScrambledElements(options);
     });
 
-    // handle client side navigation vor SPAs
+    // handle client side navigation for SPAs
     nuxtApp.hook("page:finish", () => {
-      // small delay to ensure dom is updated
       requestAnimationFrame(() => {
-        decodeScrambledElements(options.attribute);
+        decodeScrambledElements(options);
       });
     });
   },
 });
 
-function decodeScrambledElements(attribute: string): void {
+function decodeScrambledElements(options: ScrambleOptions): void {
+  const { attribute, key, autoLink } = options;
   const elements = document.querySelectorAll(`[${attribute}]`);
 
   elements.forEach((element) => {
     const encoded = element.getAttribute(attribute);
+    const type = element.getAttribute("data-scramble-type") as
+      | ScramblePattern["name"]
+      | null;
 
     if (!encoded) {
       return;
     }
 
     try {
-      const decoded = decode(encoded);
+      const decoded = decode(encoded, key);
+
+      // remove aria-hidden since now the real content is showing
+      element.removeAttribute("aria-hidden");
+      element.removeAttribute(attribute);
+      element.classList.remove(options.className);
+      element.classList.add("scramble-decoded");
+
+      if (autoLink && type) {
+        const prefix = getLinkPrefix(type);
+
+        if (prefix) {
+          const link = document.createElement("a");
+
+          const href =
+            type === "phone"
+              ? prefix + normalizePhone(decoded)
+              : prefix + decoded;
+
+          link.href = href;
+          link.textContent = decoded;
+          link.className = "scramble-link";
+
+          element.replaceWith(link);
+          return;
+        }
+      }
 
       element.textContent = decoded;
-      element.removeAttribute(attribute);
-
-      // keep class after decoding but add marker
-      element.classList.add("scramble-decoded");
     } catch (error) {
       console.warn("[nuxt-scramble] Failed to decode element:", error);
     }

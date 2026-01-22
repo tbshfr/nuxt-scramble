@@ -25,7 +25,7 @@ export default defineNitroPlugin((nitroApp) => {
     }
 
     html.body = html.body.map((content: string) =>
-      transformContent(content, patterns, options.attribute, options.className),
+      transformContent(content, patterns, options),
     );
   });
 });
@@ -33,37 +33,57 @@ export default defineNitroPlugin((nitroApp) => {
 function transformContent(
   content: string,
   patterns: ScramblePattern[],
-  attribute: string,
-  className: string,
+  options: ScrambleOptions,
 ): string {
   if (!content || typeof content !== "string") {
     return content;
   }
 
-  const result = content.replace(/(?<=>)([^<]+)(?=<)/g, (match) =>
-    transformTextNode(match, patterns, attribute, className),
-  );
-
-  return result;
-}
-
-function transformTextNode(
-  text: string,
-  patterns: ScramblePattern[],
-  attribute: string,
-  className: string,
-): string {
-  let result = text;
+  const { attribute, className, key } = options;
 
   for (const pattern of patterns) {
     const regex = createRegex(pattern);
 
-    result = result.replace(regex, (match) => {
-      // skip if already inside a scrambled element
-      const encoded = encode(match);
-      return `<span ${attribute}="${encoded}" class="${className}" data-scramble-type="${pattern.name}"></span>`;
-    });
+    const matches: Array<{ match: string; index: number }> = [];
+    let execResult: RegExpExecArray | null;
+
+    while ((execResult = regex.exec(content)) !== null) {
+      matches.push({ match: execResult[0], index: execResult.index });
+    }
+
+    for (let i = matches.length - 1; i >= 0; i--) {
+      const matchInfo = matches[i];
+      if (!matchInfo) continue;
+      const { match, index } = matchInfo;
+      const beforeMatch = content.substring(0, index);
+
+      const lastOpenTag = beforeMatch.lastIndexOf("<");
+      const lastCloseTag = beforeMatch.lastIndexOf(">");
+
+      if (lastOpenTag > lastCloseTag) {
+        continue; // dont transform if were inside a tag
+      }
+
+      // check if its inside a mailto or tel link
+      const hrefMatch = beforeMatch.match(/href=["'][^"']*$/);
+      if (hrefMatch) {
+        continue;
+      }
+
+      // check if already scrambled
+      if (beforeMatch.endsWith(`${attribute}="`)) {
+        continue;
+      }
+
+      const encoded = encode(match, key);
+      const replacement = `<span ${attribute}="${encoded}" class="${className}" data-scramble-type="${pattern.name}" aria-hidden="true"></span>`;
+
+      content =
+        content.substring(0, index) +
+        replacement +
+        content.substring(index + match.length);
+    }
   }
 
-  return result;
+  return content;
 }

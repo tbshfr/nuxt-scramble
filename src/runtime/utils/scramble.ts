@@ -1,6 +1,7 @@
 export interface ScramblePattern {
-  name: string;
+  name: "email" | "phone" | "custom";
   pattern: string;
+  // regex flags (default: 'gi')
   flags?: string;
 }
 
@@ -10,6 +11,8 @@ export interface ScrambleOptions {
   patterns: ScramblePattern[];
   attribute: string;
   className: string;
+  key: string;
+  autoLink: boolean;
 }
 
 export const EMAIL_PATTERN: ScramblePattern = {
@@ -25,31 +28,37 @@ export const PHONE_PATTERN: ScramblePattern = {
   flags: "g",
 };
 
-export function encode(text: string): string {
-  if (typeof Buffer !== "undefined") {
-    // in node
-    return Buffer.from(text, "utf-8").toString("base64");
+// generate a random key for XOR encoding
+// called once at build time
+export function generateKey(length = 16): string {
+  const chars =
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+  let result = "";
+  for (let i = 0; i < length; i++) {
+    result += chars.charAt(Math.floor(Math.random() * chars.length));
   }
-  // in browser
-  return btoa(
-    encodeURIComponent(text).replace(/%([0-9A-F]{2})/g, (_, p1) =>
-      String.fromCharCode(Number.parseInt(p1, 16)),
-    ),
-  );
+  return result;
 }
 
-export function decode(encoded: string): string {
-  if (typeof Buffer !== "undefined") {
-    // in node
-    return Buffer.from(encoded, "base64").toString("utf-8");
+// returns a hex string that doesnt look like base64
+export function encode(text: string, key: string): string {
+  const result: string[] = [];
+  for (let i = 0; i < text.length; i++) {
+    const charCode = text.charCodeAt(i) ^ key.charCodeAt(i % key.length);
+    result.push(charCode.toString(16).padStart(2, "0"));
   }
-  // in browser
-  return decodeURIComponent(
-    atob(encoded)
-      .split("")
-      .map((c) => "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2))
-      .join(""),
-  );
+  return result.join("");
+}
+
+export function decode(encoded: string, key: string): string {
+  const result: string[] = [];
+  for (let i = 0; i < encoded.length; i += 2) {
+    const charCode =
+      Number.parseInt(encoded.substring(i, i + 2), 16) ^
+      key.charCodeAt((i / 2) % key.length);
+    result.push(String.fromCharCode(charCode));
+  }
+  return result.join("");
 }
 
 export function createRegex(pattern: ScramblePattern): RegExp {
@@ -68,23 +77,19 @@ export function getAllPatterns(options: ScrambleOptions): ScramblePattern[] {
   return patterns;
 }
 
-export function scrambleText(
-  text: string,
-  patterns: ScramblePattern[],
-  attribute: string,
-  className: string,
-): string {
-  let result = text;
-
-  for (const pattern of patterns) {
-    const regex = createRegex(pattern);
-    result = result.replace(regex, (match) => {
-      const encoded = encode(match);
-      return `<span ${attribute}="${encoded}" class="${className}" data-scramble-type="${pattern.name}"></span>`;
-    });
+export function getLinkPrefix(type: ScramblePattern["name"]): string | null {
+  switch (type) {
+    case "email":
+      return "mailto:";
+    case "phone":
+      return "tel:";
+    default:
+      return null;
   }
+}
 
-  return result;
+export function normalizePhone(phone: string): string {
+  return phone.replace(/[\s().-]/g, "");
 }
 
 export function hasMatches(text: string, patterns: ScramblePattern[]): boolean {

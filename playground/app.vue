@@ -4,16 +4,19 @@
 
     <section>
       <h2>Automatic Scrambling (via Nitro plugin)</h2>
-      <p>These are automatically detected and scrambled on the server:</p>
+      <p>
+        These are automatically detected and scrambled on the server, then
+        decoded to accessible links:
+      </p>
 
       <div class="example">
-        <h3>Email addresses:</h3>
-        <p>Contact us at contact@example.com for more information</p>
-        <p>Or reach out to support@example.com for support</p>
+        <h3>Email addresses -> mailto: links</h3>
+        <p>Contact us at contact@example.com for more information.</p>
+        <p>Or reach out to support@examplec.om for support.</p>
       </div>
 
       <div class="example">
-        <h3>Phone numbers:</h3>
+        <h3>Phone numbers -> tel: links</h3>
         <p>Call us: +1 123-456-789</p>
         <p>Other Number: +43 1234567891</p>
         <p>Another Number: (555) 569-6969</p>
@@ -26,15 +29,23 @@
 
       <div class="example">
         <p>
-          Email:
-          <ScrambleText text="email@example.com" type="email" />
+          Email (auto-linked):
+          <ScrambleText text="explicit@example.com" type="email" />
         </p>
         <p>
-          Custom Text:
+          Phone (auto-linked):
+          <ScrambleText text="+1 800-555-0199" type="phone" />
+        </p>
+        <p>
+          Custom text (no link):
           <ScrambleText
-            text="This is custom text that i dont want scraped"
+            text="I dont want this text to be scraped"
             type="custom"
           />
+        </p>
+        <p>
+          Email without link:
+          <ScrambleText text="nolink@example.com" type="email" :link="false" />
         </p>
       </div>
     </section>
@@ -42,22 +53,26 @@
     <section>
       <h2>Composable Usage</h2>
       <div class="example">
-        <p>Encoded value: {{ encoded }}</p>
         <ClientOnly>
+          <p>Original: {{ testEmail }}</p>
+          <p>XOR Encoded: {{ encoded }}</p>
           <p>Decoded back: {{ decoded }}</p>
+          <p>Has email pattern: {{ hasEmail ? "Yes" : "No" }}</p>
           <template #fallback>
+            <p>Original: <span class="scrambled">Loading...</span></p>
+            <p>XOR Encoded: <span class="scrambled">Loading...</span></p>
             <p>Decoded back: <span class="scrambled">Loading...</span></p>
+            <p>Has email pattern: <span class="scrambled">Loading...</span></p>
           </template>
         </ClientOnly>
-        <p>Has email pattern: {{ hasEmail ? "Yes" : "No" }}</p>
       </div>
     </section>
 
     <section>
       <h2>View Source Test</h2>
       <p class="hint">
-        View the page source to verify emails/phones are scrambled in HTML. They
-        should appear as base64 encoded strings, not readable text.
+        View the page source to verify emails/phones are XOR-encoded. This
+        should defeat most scrapers that dont have js enabled.
       </p>
     </section>
   </div>
@@ -121,11 +136,26 @@ section {
   background: #ffebee;
   padding: 2px 4px;
   border-radius: 2px;
+  font-style: italic;
+  color: #999;
 }
 
 .scramble-decoded {
   background: #e8f5e9;
   padding: 2px 4px;
   border-radius: 2px;
+}
+
+.scramble-link {
+  color: #00dc82;
+  text-decoration: none;
+}
+
+.scramble-link:hover {
+  text-decoration: underline;
+}
+
+a {
+  color: #00dc82;
 }
 </style>
