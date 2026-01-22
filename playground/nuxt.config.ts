@@ -1,6 +1,6 @@
 export default defineNuxtConfig({
-  modules: ['nuxt-scramble'],
+  modules: ["nuxt-scramble"],
   devtools: { enabled: true },
-  compatibilityDate: 'latest',
+  compatibilityDate: "latest",
   scramble: {},
-})
+});
