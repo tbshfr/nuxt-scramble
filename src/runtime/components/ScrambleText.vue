@@ -1,7 +1,6 @@
 <script setup lang="ts">
-import { computed, onMounted, ref } from "vue";
 import { useRuntimeConfig } from "#app";
-import { encode, decode } from "../utils/scramble";
+import { encode } from "../utils/scramble";
 import type { ScrambleOptions } from "../utils/scramble";
 
 const props = defineProps<{
@@ -13,28 +12,22 @@ const props = defineProps<{
 const config = useRuntimeConfig();
 const options = config.public.scramble as ScrambleOptions;
 
-const isClient = ref(false);
-const decodedText = ref("");
-
-const encodedText = computed(() => encode(props.text));
-
-onMounted(() => {
-  decodedText.value = decode(encodedText.value);
-  isClient.value = true;
-});
+// encoded value for SSR fallback
+const encodedText = encode(props.text);
 </script>
 
 <template>
-  <span
-    v-if="!isClient"
-    :data-scramble="encodedText"
-    :class="options?.className || 'scrambled'"
-    :data-scramble-type="type || 'custom'"
-  />
-  <span
-    v-else
-    class="scramble-decoded"
-    :data-scramble-type="type || 'custom'"
-    >{{ decodedText }}</span
-  >
+  <ClientOnly>
+    <span class="scramble-decoded" :data-scramble-type="type || 'custom'">{{
+      text
+    }}</span>
+
+    <template #fallback>
+      <span
+        :data-scramble="encodedText"
+        :class="options?.className || 'scrambled'"
+        :data-scramble-type="type || 'custom'"
+      />
+    </template>
+  </ClientOnly>
 </template>

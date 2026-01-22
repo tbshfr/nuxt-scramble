@@ -43,7 +43,12 @@
       <h2>Composable Usage</h2>
       <div class="example">
         <p>Encoded value: {{ encoded }}</p>
-        <p>Decoded back: {{ decoded }}</p>
+        <ClientOnly>
+          <p>Decoded back: {{ decoded }}</p>
+          <template #fallback>
+            <p>Decoded back: <span class="scrambled">Loading...</span></p>
+          </template>
+        </ClientOnly>
         <p>Has email pattern: {{ hasEmail ? "Yes" : "No" }}</p>
       </div>
     </section>
