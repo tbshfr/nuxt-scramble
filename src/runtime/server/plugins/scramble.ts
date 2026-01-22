@@ -14,10 +14,6 @@ export default defineNitroPlugin((nitroApp) => {
     const config = useRuntimeConfig();
     const options = config.public.scramble as ScrambleOptions;
 
-    if (!options?.enabled) {
-      return;
-    }
-
     const patterns = getAllPatterns(options);
 
     if (patterns.length === 0) {

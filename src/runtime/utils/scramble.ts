@@ -6,7 +6,6 @@ export interface ScramblePattern {
 }
 
 export interface ScrambleOptions {
-  enabled: boolean;
   defaultPatterns: boolean;
   patterns: ScramblePattern[];
   attribute: string;

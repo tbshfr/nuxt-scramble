@@ -10,8 +10,6 @@ import type { ScramblePattern } from "./runtime/utils/scramble";
 import { generateKey } from "./runtime/utils/scramble";
 
 export interface ModuleOptions {
-  // enable/disable module (default: true)
-  enabled?: boolean;
   // include default paterns for emails and phone numbers (default: true)
   defaultPatterns?: boolean;
   // custom patterns to match and scramble
@@ -32,7 +30,6 @@ export default defineNuxtModule<ModuleOptions>({
     configKey: "scramble",
   },
   defaults: {
-    enabled: true,
     defaultPatterns: true,
     patterns: [],
     attribute: "data-scramble",
@@ -43,17 +40,12 @@ export default defineNuxtModule<ModuleOptions>({
   setup(options, nuxt) {
     const resolver = createResolver(import.meta.url);
 
-    if (!options.enabled) {
-      return;
-    }
-
     // generate a unique key per build for XOR encoding
     // this makes the encoded strings different for each build (should help against scrapers that get the key one time and try to reuse it later)
     // this will never help against scrapers that have js enabled
     const key = generateKey(16);
 
     nuxt.options.runtimeConfig.public.scramble = {
-      enabled: options.enabled ?? true,
       defaultPatterns: options.defaultPatterns ?? true,
       patterns: options.patterns ?? [],
       attribute: options.attribute ?? "data-scramble",

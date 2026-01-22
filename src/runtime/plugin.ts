@@ -11,10 +11,6 @@ export default defineNuxtPlugin({
     const config = useRuntimeConfig();
     const options = config.public.scramble as ScrambleOptions;
 
-    if (!options?.enabled) {
-      return;
-    }
-
     nuxtApp.hook("app:mounted", () => {
       decodeScrambledElements(options);
     });
