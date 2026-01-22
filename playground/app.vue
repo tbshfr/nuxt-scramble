@@ -21,6 +21,11 @@
         <p>Other Number: +43 1234567891</p>
         <p>Another Number: (555) 569-6969</p>
       </div>
+
+      <div class="example">
+        <h3>Custom Regex (see nuxt.config.ts)</h3>
+        <p>ssn: 123-45-6789</p>
+      </div>
     </section>
 
     <section>
