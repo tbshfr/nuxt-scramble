@@ -3,13 +3,21 @@ import { useRuntimeConfig } from "#app";
 import { encode, getLinkPrefix, normalizePhone } from "../utils/scramble";
 import type { ScrambleOptions, ScramblePattern } from "../utils/scramble";
 
-const props = defineProps<{
-  text: string;
-  // optionaly override the pattern type for semantics or link creation
-  type?: ScramblePattern["name"];
-  // override autoLink for this instance
-  link?: boolean;
-}>();
+const props = withDefaults(
+  defineProps<{
+    text: string;
+    // optionaly override the pattern type for semantics or link creation
+    type?: ScramblePattern["name"];
+    // override autoLink for this instance
+    link?: boolean;
+  }>(),
+  {
+    // vue seems to treat optional missing boolean props as false by default
+    // without defaults the global config autoLink is not used
+    type: undefined,
+    link: undefined,
+  },
+);
 
 const config = useRuntimeConfig();
 const options = config.public.scramble as ScrambleOptions;
