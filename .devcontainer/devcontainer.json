@@ -1,0 +1,23 @@
+{
+    "name": "nuxt-scramble-devcontainer",
+    "image": "mcr.microsoft.com/devcontainers/typescript-node:22-bookworm",
+    "customizations": {
+        "vscode": {
+            "settings": {},
+            "extensions": [
+                "Vue.volar",
+                "dbaeumer.vscode-eslint",
+                "esbenp.prettier-vscode"
+            ]
+        }
+    },
+    "remoteUser": "node",
+    // start with --host, the devcontainer extensions creates a render tunnel socket for every file and its extremely slow to load a nuxt project
+    "appPort": [
+        "127.0.0.1:3000:3000"
+    ],
+    "postStartCommand": "pnpm install",
+    "mounts": [
+        "source=pnpm-store,target=${containerWorkspaceFolder}/.pnpm-store,type=volume"
+    ]
+}

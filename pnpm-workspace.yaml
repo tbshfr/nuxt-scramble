@@ -1,0 +1,4 @@
+packages:
+  - playground
+
+minimumReleaseAge: 10080 # 1 week
