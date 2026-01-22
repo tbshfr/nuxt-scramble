@@ -64,7 +64,7 @@ function decodeScrambledElements(options: ScrambleOptions): void {
 
           link.href = href;
           link.textContent = decoded;
-          link.className = "scramble-link";
+          link.className = "scramble-link scramble-decoded";
 
           element.replaceWith(link);
           return;
