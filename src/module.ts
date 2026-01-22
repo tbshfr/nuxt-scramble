@@ -22,6 +22,8 @@ export interface ModuleOptions {
   className?: string;
   // auto create mailto:/tel: links (default: true) */
   autoLink?: boolean;
+  // placeholder text shown when js is disabled or while its still loading (default: '[protected]')
+  placeholder?: string;
 }
 
 export default defineNuxtModule<ModuleOptions>({
@@ -36,6 +38,7 @@ export default defineNuxtModule<ModuleOptions>({
     attribute: "data-scramble",
     className: "scrambled",
     autoLink: true,
+    placeholder: "[protected]",
   },
   setup(options, nuxt) {
     const resolver = createResolver(import.meta.url);
@@ -57,6 +60,7 @@ export default defineNuxtModule<ModuleOptions>({
       className: options.className ?? "scrambled",
       key,
       autoLink: options.autoLink ?? true,
+      placeholder: options.placeholder ?? "[protected]",
     };
 
     addComponentsDir({

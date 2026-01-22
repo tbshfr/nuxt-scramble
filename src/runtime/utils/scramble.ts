@@ -13,6 +13,7 @@ export interface ScrambleOptions {
   className: string;
   key: string;
   autoLink: boolean;
+  placeholder: string;
 }
 
 export const EMAIL_PATTERN: ScramblePattern = {

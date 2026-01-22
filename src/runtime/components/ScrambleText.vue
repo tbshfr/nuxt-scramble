@@ -57,7 +57,8 @@ const href = linkPrefix
         :class="options?.className || 'scrambled'"
         :data-scramble-type="type || 'custom'"
         aria-hidden="true"
-      />
+        >{{ options?.placeholder || "[protected]" }}</span
+      >
     </template>
   </ClientOnly>
 </template>

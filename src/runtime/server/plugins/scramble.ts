@@ -76,7 +76,8 @@ function transformContent(
       }
 
       const encoded = encode(match, key);
-      const replacement = `<span ${attribute}="${encoded}" class="${className}" data-scramble-type="${pattern.name}" aria-hidden="true"></span>`;
+      const placeholder = options.placeholder || "[protected]";
+      const replacement = `<span ${attribute}="${encoded}" class="${className}" data-scramble-type="${pattern.name}" aria-hidden="true">${placeholder}</span>`;
 
       content =
         content.substring(0, index) +
