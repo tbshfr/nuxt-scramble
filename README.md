@@ -137,6 +137,12 @@ pnpm run lint
 pnpm run test
 pnpm run test:watch
 
+# Run E2E tests
+pnpm test:e2e --project=ssr-dev-chrome    # Quick single check
+pnpm test:e2e --project="*-firefox"       # All Firefox tests
+pnpm test:e2e --project="ssg-*"           # All SSG tests
+pnpm test:e2e                             # Full matrix (CI)
+
 # Release new version
 pnpm run release
 pnpm run release:major

@@ -1,7 +1,5 @@
-import MyModule from '../../../src/module'
+import scramble from "../../../src/module";
 
 export default defineNuxtConfig({
-  modules: [
-    MyModule,
-  ],
-})
+  modules: [scramble],
+});
