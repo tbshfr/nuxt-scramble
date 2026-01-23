@@ -26,6 +26,10 @@ export default defineNuxtPlugin({
 
 function decodeScrambledElements(options: ScrambleOptions): void {
   const { attribute, key, autoLink } = options;
+
+  // decode scrambled href attributes (tel and mailto links)
+  decodeScrambledHrefElements(key);
+
   const elements = document.querySelectorAll(`[${attribute}]`);
 
   elements.forEach((element) => {
@@ -70,6 +74,35 @@ function decodeScrambledElements(options: ScrambleOptions): void {
       element.textContent = decoded;
     } catch (error) {
       console.warn("[nuxt-scramble] Failed to decode element:", error);
+    }
+  });
+}
+
+function decodeScrambledHrefElements(key: string): void {
+  const elements = document.querySelectorAll("[data-scramble-href]");
+
+  elements.forEach((element) => {
+    const encoded = element.getAttribute("data-scramble-href");
+    const prefix = element.getAttribute("data-scramble-href-prefix");
+
+    if (!encoded || !prefix) {
+      return;
+    }
+
+    try {
+      const decoded = decode(encoded, key);
+
+      const href =
+        prefix.toLowerCase() === "tel:"
+          ? prefix + normalizePhone(decoded)
+          : prefix + decoded;
+
+      element.setAttribute("href", href);
+
+      element.removeAttribute("data-scramble-href");
+      element.removeAttribute("data-scramble-href-prefix");
+    } catch (error) {
+      console.warn("[nuxt-scramble] Failed to decode href:", error);
     }
   });
 }

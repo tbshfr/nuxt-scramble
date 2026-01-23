@@ -37,6 +37,9 @@ function transformContent(
 
   const { attribute, className, key } = options;
 
+  // encode manually created tel and mailto links
+  content = scrambleHrefAttributes(content, patterns, options);
+
   for (const pattern of patterns) {
     const regex = createRegex(pattern);
 
@@ -83,4 +86,28 @@ function transformContent(
   }
 
   return content;
+}
+
+function scrambleHrefAttributes(
+  content: string,
+  patterns: ScramblePattern[],
+  options: ScrambleOptions,
+): string {
+  const { key, placeholder } = options;
+  const placeholderText = placeholder || "[protected]";
+
+  const hrefRegex = /href=(["'])(mailto:|tel:)([^"']+)\1/gi;
+
+  return content.replace(hrefRegex, (fullMatch, quote, prefix, value) => {
+    const type = prefix.toLowerCase() === "mailto:" ? "email" : "phone";
+
+    const matchingPattern = patterns.find((p) => p.name === type);
+    if (!matchingPattern) {
+      return fullMatch;
+    }
+
+    const encoded = encode(value, key);
+
+    return `href=${quote}#${placeholderText}${quote} data-scramble-href="${encoded}" data-scramble-href-prefix="${prefix}"`;
+  });
 }

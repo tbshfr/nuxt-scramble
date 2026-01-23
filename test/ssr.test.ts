@@ -26,10 +26,12 @@ describe("nuxt-scramble SSR", async () => {
       expect(html).not.toContain("+49 123 456789");
     });
 
-    it("preserves existing mailto/tel links", async () => {
+    it("scrambles existing mailto/tel links", async () => {
       const html = await $fetch("/");
-      expect(html).toContain('href="mailto:existing@link.com"');
-      expect(html).toContain('href="tel:+1234567890"');
+      expect(html).not.toContain('href="mailto:existing@link.com"');
+      expect(html).not.toContain('href="tel:+1234567890"');
+      expect(html).toContain('data-scramble-href-prefix="mailto:"');
+      expect(html).toContain('data-scramble-href-prefix="tel:"');
     });
 
     it("does not scramble inside tag attributes", async () => {

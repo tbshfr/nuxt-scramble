@@ -23,6 +23,18 @@
       </div>
 
       <div class="example">
+        <h3>Manual tel: links (href attribute scrambling)</h3>
+        <p>
+          Manual link:
+          <a href="tel:+39 123 456 7895">+39 123 456 7895</a>
+        </p>
+        <p>
+          Manual mailto:
+          <a href="mailto:manual@example.com">manual@example.com</a>
+        </p>
+      </div>
+
+      <div class="example">
         <h3>Custom Regex (see nuxt.config.ts)</h3>
         <p>ssn: 123-45-6789</p>
       </div>
