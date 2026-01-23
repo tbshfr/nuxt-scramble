@@ -7,7 +7,7 @@ export default defineNuxtConfig({
     patterns: [{ name: "ssn", pattern: "\\d{3}-\\d{2}-\\d{4}" }],
     attribute: "data-scramble",
     className: "scrambled",
-    autoLink: false,
+    autoLink: true,
     placeholder: "[protected]",
   },
 });
