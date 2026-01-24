@@ -1,6 +1,36 @@
 # Changelog
 
 
+## v0.2.0
+
+[compare changes](https://github.com/tbshfr/nuxt-scramble/compare/v0.1.1...v0.2.0)
+
+### 🚀 Enhancements
+
+- ⚠️  Add autoScramble option, disabled by default ([66a563c](https://github.com/tbshfr/nuxt-scramble/commit/66a563c))
+- ⚠️  Remove composable with no real usecase ([d2b1e89](https://github.com/tbshfr/nuxt-scramble/commit/d2b1e89))
+- ⚠️  Move pattern config into autoscramble config ([7ecc54b](https://github.com/tbshfr/nuxt-scramble/commit/7ecc54b))
+
+### 🩹 Fixes
+
+- Scramble existing mailto/tel links ([116c6fb](https://github.com/tbshfr/nuxt-scramble/commit/116c6fb))
+- Remove normalizePhone due to hydration errors ([2922e38](https://github.com/tbshfr/nuxt-scramble/commit/2922e38))
+
+### 🏡 Chore
+
+- Update readme ([cedb492](https://github.com/tbshfr/nuxt-scramble/commit/cedb492))
+- Add e2e tests to release scripts ([66299a3](https://github.com/tbshfr/nuxt-scramble/commit/66299a3))
+
+#### ⚠️ Breaking Changes
+
+- ⚠️  Add autoScramble option, disabled by default ([66a563c](https://github.com/tbshfr/nuxt-scramble/commit/66a563c))
+- ⚠️  Remove composable with no real usecase ([d2b1e89](https://github.com/tbshfr/nuxt-scramble/commit/d2b1e89))
+- ⚠️  Move pattern config into autoscramble config ([7ecc54b](https://github.com/tbshfr/nuxt-scramble/commit/7ecc54b))
+
+### ❤️ Contributors
+
+- Tbshfr
+
 ## v0.1.1
 
 
