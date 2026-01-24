@@ -82,10 +82,5 @@ describe("nuxt-scramble SSR", async () => {
       const html = await $fetch("/");
       expect(html).toContain('class="scrambled"');
     });
-
-    it("renders composable fallback during SSR", async () => {
-      const html = await $fetch("/");
-      expect(html).toContain("composable-fallback");
-    });
   });
 });

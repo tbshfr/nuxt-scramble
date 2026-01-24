@@ -47,13 +47,6 @@ test.describe("Scramble Module E2E", () => {
     await expect(componentPhone).toHaveAttribute("href", "tel:+442079460958");
   });
 
-  test("useScramble composable encodes and decodes", async ({ page, goto }) => {
-    await goto("/", { waitUntil: "hydration" });
-
-    const decoded = page.locator("#decoded");
-    await expect(decoded).toHaveText("composable@test.com");
-  });
-
   test("no hydration errors in console", async ({ page, goto }) => {
     const errors: string[] = [];
     page.on("console", (msg) => {
@@ -103,12 +96,5 @@ test.describe("Scramble Module E2E", () => {
 
     const link = nolinkEl.locator("a");
     await expect(link).toHaveCount(0);
-  });
-
-  test("useScramble encoded value is hex string", async ({ page, goto }) => {
-    await goto("/", { waitUntil: "hydration" });
-
-    const encoded = page.locator("#encoded");
-    await expect(encoded).toHaveText(/^[0-9a-f]+$/);
   });
 });

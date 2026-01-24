@@ -64,8 +64,6 @@ export default defineNuxtModule<ModuleOptions>({
       pathPrefix: false,
     });
 
-    addImportsDir(resolver.resolve("./runtime/composables"));
-
     addPlugin({
       src: resolver.resolve("./runtime/plugin"),
       mode: "client",

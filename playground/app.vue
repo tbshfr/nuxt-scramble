@@ -68,24 +68,6 @@
     </section>
 
     <section>
-      <h2>Composable Usage</h2>
-      <div class="example">
-        <ClientOnly>
-          <p>Original: {{ testEmail }}</p>
-          <p>XOR Encoded: {{ encoded }}</p>
-          <p>Decoded back: {{ decoded }}</p>
-          <p>Has email pattern: {{ hasEmail ? "Yes" : "No" }}</p>
-          <template #fallback>
-            <p>Original: <span class="scrambled">Loading...</span></p>
-            <p>XOR Encoded: <span class="scrambled">Loading...</span></p>
-            <p>Decoded back: <span class="scrambled">Loading...</span></p>
-            <p>Has email pattern: <span class="scrambled">Loading...</span></p>
-          </template>
-        </ClientOnly>
-      </div>
-    </section>
-
-    <section>
       <h2>View Source Test</h2>
       <p class="hint">
         View the page source to verify emails/phones are XOR-encoded. This
@@ -94,15 +76,6 @@
     </section>
   </div>
 </template>
-
-<script setup>
-const { encode, decode, matches } = useScramble();
-
-const testEmail = "test@example.com";
-const encoded = encode(testEmail);
-const decoded = decode(encoded);
-const hasEmail = matches(testEmail);
-</script>
 
 <style>
 .container {

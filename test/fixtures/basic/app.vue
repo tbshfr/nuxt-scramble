@@ -21,31 +21,9 @@
       <ScrambleText text="nolink@example.com" type="email" :link="false" />
     </span>
 
-    <!-- Composable usage -->
-    <ClientOnly>
-      <div id="composable-test">
-        <span id="encoded">{{ encoded }}</span>
-        <span id="decoded">{{ decoded }}</span>
-        <span id="matches-email">{{ matchesEmail }}</span>
-        <span id="matches-text">{{ matchesText }}</span>
-      </div>
-      <template #fallback>
-        <div id="composable-fallback">loading</div>
-      </template>
-    </ClientOnly>
-
     <!-- Edge cases -->
     <a href="mailto:existing@link.com">Existing mailto</a>
     <a href="tel:+1234567890">Existing tel</a>
     <input type="email" placeholder="user@placeholder.com" />
   </div>
 </template>
-
-<script setup>
-const { encode, decode, matches } = useScramble();
-const testEmail = "composable@test.com";
-const encoded = encode(testEmail);
-const decoded = decode(encoded);
-const matchesEmail = matches("check@email.com");
-const matchesText = matches("plain text");
-</script>
