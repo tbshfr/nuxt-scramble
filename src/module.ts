@@ -22,6 +22,9 @@ export interface ModuleOptions {
   autoLink?: boolean;
   // placeholder text shown when js is disabled or while its still loading (default: '[protected]')
   placeholder?: string;
+  // automatically scramble matching patterns in rendered HTML via Nitro plugin (default: false)
+  // only enable this if you prerender your pages because it has a performance impact on SSR
+  autoScramble?: boolean | AutoScrambleOptions;
 }
 
 export default defineNuxtModule<ModuleOptions>({
@@ -36,6 +39,7 @@ export default defineNuxtModule<ModuleOptions>({
     className: "scrambled",
     autoLink: true,
     placeholder: "[protected]",
+    autoScramble: false,
   },
   setup(options, nuxt) {
     const resolver = createResolver(import.meta.url);
@@ -67,6 +71,8 @@ export default defineNuxtModule<ModuleOptions>({
       mode: "client",
     });
 
-    addServerPlugin(resolver.resolve("./runtime/server/plugins/scramble"));
+    if (autoScrambleEnabled) {
+      addServerPlugin(resolver.resolve("./runtime/server/plugins/scramble"));
+    }
   },
 });
