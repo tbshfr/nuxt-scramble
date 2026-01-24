@@ -9,7 +9,7 @@ export default defineNuxtConfig({
     placeholder: "[protected]",
     autoScramble: {
       defaultPatterns: true,
-      patterns: [{ name: "ssn", pattern: "\\d{3}-\\d{2}-\\d{4}" }],
+      patterns: [{ name: "custom", pattern: "\\d{3}-\\d{2}-\\d{4}" }],
     },
   },
 });

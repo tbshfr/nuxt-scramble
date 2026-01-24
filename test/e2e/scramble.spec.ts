@@ -15,7 +15,7 @@ test.describe("Scramble Module E2E", () => {
 
     const phoneLink = page.locator("#auto-phone a");
     await expect(phoneLink).toBeVisible();
-    await expect(phoneLink).toHaveAttribute("href", "tel:+11234567891");
+    await expect(phoneLink).toHaveAttribute("href", "tel:+1 123-456-7891");
     await expect(phoneLink).toHaveText("+1 123-456-7891");
   });
 
@@ -44,7 +44,10 @@ test.describe("Scramble Module E2E", () => {
     await goto("/", { waitUntil: "hydration" });
 
     const componentPhone = page.locator("#comp-phone a");
-    await expect(componentPhone).toHaveAttribute("href", "tel:+442079460958");
+    await expect(componentPhone).toHaveAttribute(
+      "href",
+      "tel:+44 20 7946 0958",
+    );
   });
 
   test("no hydration errors in console", async ({ page, goto }) => {

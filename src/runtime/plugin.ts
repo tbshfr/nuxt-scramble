@@ -1,5 +1,5 @@
 import { defineNuxtPlugin, useRuntimeConfig } from "#app";
-import { decode, getLinkPrefix, normalizePhone } from "./utils/scramble";
+import { decode, getLinkPrefix } from "./utils/scramble";
 import type { ScrambleOptions, ScramblePattern } from "./utils/scramble";
 
 // client side plugin to devode scrambled elements after hydration to prevent mismatches
@@ -57,12 +57,7 @@ function decodeScrambledElements(options: ScrambleOptions): void {
         if (prefix) {
           const link = document.createElement("a");
 
-          const href =
-            type === "phone"
-              ? prefix + normalizePhone(decoded)
-              : prefix + decoded;
-
-          link.href = href;
+          link.href = prefix + decoded;
           link.textContent = decoded;
           link.className = "scramble-link scramble-decoded";
 
@@ -92,12 +87,7 @@ function decodeScrambledHrefElements(key: string): void {
     try {
       const decoded = decode(encoded, key);
 
-      const href =
-        prefix.toLowerCase() === "tel:"
-          ? prefix + normalizePhone(decoded)
-          : prefix + decoded;
-
-      element.setAttribute("href", href);
+      element.setAttribute("href", prefix + decoded);
 
       element.removeAttribute("data-scramble-href");
       element.removeAttribute("data-scramble-href-prefix");

@@ -88,10 +88,6 @@ export function getLinkPrefix(type: ScramblePattern["name"]): string | null {
   }
 }
 
-export function normalizePhone(phone: string): string {
-  return phone.replace(/[\s().-]/g, "");
-}
-
 export function hasMatches(text: string, patterns: ScramblePattern[]): boolean {
   for (const pattern of patterns) {
     const regex = createRegex(pattern);

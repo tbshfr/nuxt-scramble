@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useRuntimeConfig } from "#app";
-import { encode, getLinkPrefix, normalizePhone } from "../utils/scramble";
+import { encode, getLinkPrefix } from "../utils/scramble";
 import type { ScrambleOptions, ScramblePattern } from "../utils/scramble";
 
 const props = withDefaults(
@@ -28,11 +28,7 @@ const encodedText = encode(props.text, options.key);
 const shouldLink =
   props.link ?? (options.autoLink && props.type && props.type !== "custom");
 const linkPrefix = props.type ? getLinkPrefix(props.type) : null;
-const href = linkPrefix
-  ? props.type === "phone"
-    ? linkPrefix + normalizePhone(props.text)
-    : linkPrefix + props.text
-  : null;
+const href = linkPrefix ? linkPrefix + props.text : null;
 </script>
 
 <template>
