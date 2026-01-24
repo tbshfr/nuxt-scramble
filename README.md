@@ -21,7 +21,7 @@ A Nuxt module that obfuscates emails, phone numbers and custom text patterns in 
 - Client side decoding
 - Automatic link generation (`mailto:` and `tel:`)
 - Custom regex patterns for protecting other sensitive data
-- Component and composable for more control
+- `<ScrambleText>` component for control
 - New encryption key generated per build
 
 ## Quick Setup
@@ -44,19 +44,6 @@ That's it! You can now use nuxt-scramble in your Nuxt app ✨
 
 ## Usage
 
-### Automatic
-
-By default, the module automatically finds and scrambles emails and phone numbers in your rendered HTML:
-
-```vue
-<template>
-  <p>Contact us at contact@example.com</p>
-  <p>Call us: +1 123-456-7891</p>
-</template>
-```
-
-These will be automatically converted to clickable links and protected from scrapers.
-
 ### ScrambleText Component
 
 For explicit control, use the `<ScrambleText>` component:
@@ -69,14 +56,14 @@ For explicit control, use the `<ScrambleText>` component:
 </template>
 ```
 
-### useScramble Composable
+### Auto Scramble
 
-```typescript
-const { encode, decode, matches, patterns } = useScramble();
+When `autoScramble` is enabled (disabled by default), the module automatically finds and scrambles emails and phone numbers in your rendered HTML using a Nitro server plugin. This is ideal for prerendered/static sites.
 
-const encoded = encode("contact@example.com");
-const isProtected = matches("test@test.com"); // true
-```
+Set `autoScramble: true` to enable with default patterns, or pass an object to customize, see below.
+
+> [!NOTE]
+> Auto scramble has an performance impact on SSR as it processes all rendered HTML. Only enable it for prerendered/static sites.
 
 ## Configuration
 
@@ -84,30 +71,33 @@ const isProtected = matches("test@test.com"); // true
 export default defineNuxtConfig({
   modules: ["nuxt-scramble"],
   scramble: {
-    // include default email/phone patterns (default: true)
-    defaultPatterns: true,
+    // automatically scramble matching patterns in rendered html (default: false)
+    autoScramble: {
+      // include default email/phone patterns (default: true)
+      defaultPatterns: true,
 
-    // optional custom patterns
-    patterns: [
-      {
-        name: "custom",
-        pattern: "\\d{3}-\\d{2}-\\d{4}",
-        // optional regex flags, see https://www.w3schools.com/js/js_regexp_flags.asp
-        flags: "gi",
-      },
-    ],
-
-    // customize data attribute (default: 'data-scramble')
-    attribute: "data-scramble",
-
-    // CSS class for scrambled elements (default: 'scrambled')
-    className: "scrambled",
+      // custom patterns
+      patterns: [
+        {
+          name: "custom",
+          pattern: "\\d{3}-\\d{2}-\\d{4}",
+          // optional regex flags, see https://www.w3schools.com/js/js_regexp_flags.asp
+          flags: "gi",
+        },
+      ],
+    },
 
     // auto generate mailto:/tel: links (default: true)
     autoLink: true,
 
     // placeholder text for no-JS fallback (default: '[protected]')
     placeholder: "[protected]",
+
+    // customize data attribute (default: 'data-scramble')
+    attribute: "data-scramble",
+
+    // CSS class for scrambled elements (default: 'scrambled')
+    className: "scrambled",
   },
 });
 ```
