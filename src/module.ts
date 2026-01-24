@@ -3,17 +3,19 @@ import {
   addPlugin,
   createResolver,
   addComponentsDir,
-  addImportsDir,
   addServerPlugin,
 } from "@nuxt/kit";
 import type { ScramblePattern } from "./runtime/utils/scramble";
 import { generateKey } from "./runtime/utils/scramble";
 
-export interface ModuleOptions {
+export interface AutoScrambleOptions {
   // include default paterns for emails and phone numbers (default: true)
   defaultPatterns?: boolean;
   // custom patterns to match and scramble
   patterns?: ScramblePattern[];
+}
+
+export interface ModuleOptions {
   // data attribute name used to mark scrambled elements (default: 'data-scramble')
   attribute?: string;
   // css class added to scrambled elements (default: 'scrambled')
@@ -33,8 +35,6 @@ export default defineNuxtModule<ModuleOptions>({
     configKey: "scramble",
   },
   defaults: {
-    defaultPatterns: true,
-    patterns: [],
     attribute: "data-scramble",
     className: "scrambled",
     autoLink: true,
@@ -49,9 +49,14 @@ export default defineNuxtModule<ModuleOptions>({
     // this will never help against scrapers that have js enabled
     const key = generateKey(16);
 
+    const autoScrambleEnabled =
+      options.autoScramble !== false && options.autoScramble !== undefined;
+    const autoScrambleOptions =
+      typeof options.autoScramble === "object" ? options.autoScramble : {};
+
     nuxt.options.runtimeConfig.public.scramble = {
-      defaultPatterns: options.defaultPatterns ?? true,
-      patterns: options.patterns ?? [],
+      defaultPatterns: autoScrambleOptions.defaultPatterns ?? true,
+      patterns: autoScrambleOptions.patterns ?? [],
       attribute: options.attribute ?? "data-scramble",
       className: options.className ?? "scrambled",
       key,
