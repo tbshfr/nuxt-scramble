@@ -1,5 +1,4 @@
 packages:
   - playground
 
-# todo: use '10080 # 1 week' later
-minimumReleaseAge: 1440 # 1 day
+minimumReleaseAge: 10080 # 1 week
