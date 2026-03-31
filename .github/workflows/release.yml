@@ -7,7 +7,7 @@ on:
 
 permissions:
   contents: write
-  # id-token: write
+  id-token: write
 
 jobs:
   publish:
@@ -43,9 +43,7 @@ jobs:
         run: pnpm run prepack
 
       - name: Publish to npm
-        run: pnpm publish --access public --no-git-checks
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: pnpm publish --access public --no-git-checks --provenance
 
       - name: Sync GitHub Release
         run: pnpm exec changelogen gh release "$GITHUB_REF_NAME" --token $GITHUB_TOKEN
