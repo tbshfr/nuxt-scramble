@@ -1,6 +1,25 @@
 # Changelog
 
 
+## v0.2.1
+
+[compare changes](https://github.com/tbshfr/nuxt-scramble/compare/v0.2.0...v0.2.1)
+
+### 🚀 Enhancements
+
+- **ci:** Switch to trusted publishing ([0d502a8](https://github.com/tbshfr/nuxt-scramble/commit/0d502a8))
+
+### 🏡 Chore
+
+- Bump actions ([0463b4f](https://github.com/tbshfr/nuxt-scramble/commit/0463b4f))
+- Bump node to v24 ([2f94868](https://github.com/tbshfr/nuxt-scramble/commit/2f94868))
+- Use higher minimumReleaseAge ([58be3d2](https://github.com/tbshfr/nuxt-scramble/commit/58be3d2))
+- Bump deps ([67c041d](https://github.com/tbshfr/nuxt-scramble/commit/67c041d))
+
+### ❤️ Contributors
+
+- Tbshfr
+
 ## v0.2.0
 
 [compare changes](https://github.com/tbshfr/nuxt-scramble/compare/v0.1.1...v0.2.0)

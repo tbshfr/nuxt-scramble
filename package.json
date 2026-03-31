@@ -1,6 +1,6 @@
 {
   "name": "nuxt-scramble",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Nuxt module that obfuscates emails, phone numbers and custom text in HTML to make scraping harder",
   "repository": "tbshfr/nuxt-scramble",
   "license": "MIT",
