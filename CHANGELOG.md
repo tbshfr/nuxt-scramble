@@ -1,6 +1,27 @@
 # Changelog
 
 
+## v0.2.2
+
+[compare changes](https://github.com/tbshfr/nuxt-scramble/compare/v0.2.1...v0.2.2)
+
+### 🩹 Fixes
+
+- Add allowBuilds setting ([1df0c35](https://github.com/tbshfr/nuxt-scramble/commit/1df0c35))
+
+### 🏡 Chore
+
+- Bump deps ([ddcd1ed](https://github.com/tbshfr/nuxt-scramble/commit/ddcd1ed))
+- Add pnpm settings ([8ec3516](https://github.com/tbshfr/nuxt-scramble/commit/8ec3516))
+- Bump pnpm to v11 ([9a521d5](https://github.com/tbshfr/nuxt-scramble/commit/9a521d5))
+- Add dependabot for actions ([469afb7](https://github.com/tbshfr/nuxt-scramble/commit/469afb7))
+- Use pnpm version from package.json ([1444313](https://github.com/tbshfr/nuxt-scramble/commit/1444313))
+- Bump playground deps ([27fbc35](https://github.com/tbshfr/nuxt-scramble/commit/27fbc35))
+
+### ❤️ Contributors
+
+- Tbshfr
+
 ## v0.2.1
 
 [compare changes](https://github.com/tbshfr/nuxt-scramble/compare/v0.2.0...v0.2.1)
