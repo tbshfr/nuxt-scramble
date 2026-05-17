@@ -12,3 +12,8 @@ trustPolicyExclude:
   - "semver@6.3.1"
 
 preferFrozenLockfile: true
+
+allowBuilds:
+  "@parcel/watcher": false
+  esbuild: false
+  unrs-resolver: false
