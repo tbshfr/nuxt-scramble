@@ -2,3 +2,13 @@ packages:
   - playground
 
 minimumReleaseAge: 10080 # 1 week
+
+blockExoticSubdeps: true
+
+trustPolicy: no-downgrade
+
+trustPolicyExclude:
+  - "chokidar@4.0.3"
+  - "semver@6.3.1"
+
+preferFrozenLockfile: true
