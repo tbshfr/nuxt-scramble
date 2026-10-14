@@ -8,18 +8,31 @@ import {
   type ScramblePattern,
 } from "../../utils/scramble";
 
+interface CompiledPattern {
+  name: ScramblePattern["name"];
+  regex: RegExp;
+}
+
+const HREF_REGEX = /href=(["'])(mailto:|tel:)([^"']+)\1/gi;
+
 // nitro plugin to transform html on server render
 export default defineNitroPlugin((nitroApp) => {
-  nitroApp.hooks.hook("render:html", (html, { event: _event }) => {
-    const config = useRuntimeConfig();
-    const options = config.public.scramble as ScrambleOptions;
+  const options = useRuntimeConfig().public.scramble as ScrambleOptions;
 
-    const patterns = getAllPatterns(options);
+  // matchAll needs the g flag, and a non-global regex would only ever replace the first match
+  const patterns: CompiledPattern[] = getAllPatterns(options).map((pattern) => {
+    const regex = createRegex(pattern);
+    return {
+      name: pattern.name,
+      regex: regex.global ? regex : new RegExp(regex, `${regex.flags}g`),
+    };
+  });
 
-    if (patterns.length === 0) {
-      return;
-    }
+  if (patterns.length === 0) {
+    return;
+  }
 
+  nitroApp.hooks.hook("render:html", (html) => {
     html.body = html.body.map((content: string) =>
       transformContent(content, patterns, options),
     );
@@ -28,7 +41,7 @@ export default defineNitroPlugin((nitroApp) => {
 
 function transformContent(
   content: string,
-  patterns: ScramblePattern[],
+  patterns: CompiledPattern[],
   options: ScrambleOptions,
 ): string {
   if (!content || typeof content !== "string") {
@@ -36,78 +49,93 @@ function transformContent(
   }
 
   const { attribute, className, key } = options;
+  const placeholder = options.placeholder || "[protected]";
+  const scrambledMarker = `${attribute}="`;
 
   // encode manually created tel and mailto links
-  content = scrambleHrefAttributes(content, patterns, options);
+  content = scrambleHrefAttributes(content, patterns, key, placeholder);
 
   for (const pattern of patterns) {
-    const regex = createRegex(pattern);
+    const parts: string[] = [];
+    let lastIndex = 0;
 
-    const matches: Array<{ match: string; index: number }> = [];
-    let execResult: RegExpExecArray | null;
+    for (const execResult of content.matchAll(pattern.regex)) {
+      const match = execResult[0];
+      const index = execResult.index;
 
-    while ((execResult = regex.exec(content)) !== null) {
-      matches.push({ match: execResult[0], index: execResult.index });
-    }
-
-    for (let i = matches.length - 1; i >= 0; i--) {
-      const matchInfo = matches[i];
-      if (!matchInfo) continue;
-      const { match, index } = matchInfo;
-      const beforeMatch = content.substring(0, index);
-
-      const lastOpenTag = beforeMatch.lastIndexOf("<");
-      const lastCloseTag = beforeMatch.lastIndexOf(">");
-
-      if (lastOpenTag > lastCloseTag) {
-        continue; // dont transform if were inside a tag
-      }
-
-      // check if its inside a mailto or tel link
-      const hrefMatch = beforeMatch.match(/href=["'][^"']*$/);
-      if (hrefMatch) {
-        continue;
-      }
-
-      // check if already scrambled
-      if (beforeMatch.endsWith(`${attribute}="`)) {
+      if (shouldSkip(content, index, scrambledMarker)) {
         continue;
       }
 
       const encoded = encode(match, key);
-      const placeholder = options.placeholder || "[protected]";
-      const replacement = `<span ${attribute}="${encoded}" class="${className}" data-scramble-type="${pattern.name}" aria-hidden="true">${placeholder}</span>`;
+      parts.push(
+        content.slice(lastIndex, index),
+        `<span ${attribute}="${encoded}" class="${className}" data-scramble-type="${pattern.name}" aria-hidden="true">${placeholder}</span>`,
+      );
+      lastIndex = index + match.length;
+    }
 
-      content =
-        content.substring(0, index) +
-        replacement +
-        content.substring(index + match.length);
+    if (parts.length > 0) {
+      parts.push(content.slice(lastIndex));
+      content = parts.join("");
     }
   }
 
   return content;
 }
 
+// looks backwards from the match without copying the prefix of the document
+function shouldSkip(
+  content: string,
+  index: number,
+  scrambledMarker: string,
+): boolean {
+  if (index === 0) {
+    return false;
+  }
+
+  const before = index - 1;
+
+  // dont transform if were inside a tag
+  if (content.lastIndexOf("<", before) > content.lastIndexOf(">", before)) {
+    return true;
+  }
+
+  // inside an href value: the closest preceding quote opens `href="` / `href='`
+  const lastQuote = Math.max(
+    content.lastIndexOf('"', before),
+    content.lastIndexOf("'", before),
+  );
+  if (lastQuote >= 5 && content.startsWith("href=", lastQuote - 5)) {
+    return true;
+  }
+
+  // check if already scrambled
+  return content.endsWith(scrambledMarker, index);
+}
+
 function scrambleHrefAttributes(
   content: string,
-  patterns: ScramblePattern[],
-  options: ScrambleOptions,
+  patterns: CompiledPattern[],
+  key: string,
+  placeholder: string,
 ): string {
-  const { key, placeholder } = options;
-  const placeholderText = placeholder || "[protected]";
+  const hasEmail = patterns.some((p) => p.name === "email");
+  const hasPhone = patterns.some((p) => p.name === "phone");
 
-  const hrefRegex = /href=(["'])(mailto:|tel:)([^"']+)\1/gi;
+  if (!hasEmail && !hasPhone) {
+    return content;
+  }
 
-  return content.replace(hrefRegex, (fullMatch, quote, prefix, value) => {
-    const type = prefix.toLowerCase() === "mailto:" ? "email" : "phone";
+  return content.replace(HREF_REGEX, (fullMatch, quote, prefix, value) => {
+    const isEmail = prefix.toLowerCase() === "mailto:";
 
-    const matchingPattern = patterns.find((p) => p.name === type);
-    if (!matchingPattern) {
+    if (isEmail ? !hasEmail : !hasPhone) {
       return fullMatch;
     }
 
     const encoded = encode(value, key);
 
-    return `href=${quote}#${placeholderText}${quote} data-scramble-href="${encoded}" data-scramble-href-prefix="${prefix}"`;
+    return `href=${quote}#${placeholder}${quote} data-scramble-href="${encoded}" data-scramble-href-prefix="${prefix}"`;
   });
 }
