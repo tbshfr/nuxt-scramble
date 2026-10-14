@@ -65,7 +65,9 @@ export function createRegex(pattern: ScramblePattern): RegExp {
   return new RegExp(pattern.pattern, pattern.flags || "gi");
 }
 
-export function getAllPatterns(options: ScrambleOptions): ScramblePattern[] {
+export function getAllPatterns(
+  options: Pick<ScrambleOptions, "defaultPatterns" | "patterns">,
+): ScramblePattern[] {
   const patterns: ScramblePattern[] = [];
 
   if (options.defaultPatterns) {

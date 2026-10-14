@@ -30,7 +30,11 @@ function decodeScrambledElements(options: ScrambleOptions): void {
   // decode scrambled href attributes (tel and mailto links)
   decodeScrambledHrefElements(key);
 
-  const elements = document.querySelectorAll(`[${attribute}]`);
+  // <ScrambleText> decodes itself, and can hydrate after this runs when loaded async
+  // (e.g. in @nuxt/content), so touching its placeholder would cause a hydration mismatch
+  const elements = document.querySelectorAll(
+    `[${attribute}]:not([data-scramble-component])`,
+  );
 
   elements.forEach((element) => {
     const encoded = element.getAttribute(attribute);
