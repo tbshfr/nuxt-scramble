@@ -1,6 +1,29 @@
 # Changelog
 
 
+## v0.3.0
+
+[compare changes](https://github.com/tbshfr/nuxt-scramble/compare/v0.2.2...v0.3.0)
+
+### 🚀 Enhancements
+
+- Add opt-in nuxt content support ([1497d12](https://github.com/tbshfr/nuxt-scramble/commit/1497d12))
+- Add opt-in nuxt content support- #12 ([#12](https://github.com/tbshfr/nuxt-scramble/issues/12))
+
+### 🔥 Performance
+
+- Speed up server-side auto-scramble ([08c98a0](https://github.com/tbshfr/nuxt-scramble/commit/08c98a0))
+
+### 🏡 Chore
+
+- Bump deps ([04d794a](https://github.com/tbshfr/nuxt-scramble/commit/04d794a))
+- Add dependabot for npm ([42357a2](https://github.com/tbshfr/nuxt-scramble/commit/42357a2))
+- Bump deps ([9462ca5](https://github.com/tbshfr/nuxt-scramble/commit/9462ca5))
+
+### ❤️ Contributors
+
+- Tbshfr
+
 ## v0.2.2
 
 [compare changes](https://github.com/tbshfr/nuxt-scramble/compare/v0.2.1...v0.2.2)
