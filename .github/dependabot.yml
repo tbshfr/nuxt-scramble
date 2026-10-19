@@ -13,3 +13,18 @@ updates:
       actions-deps:
         patterns:
           - "*"
+
+  - package-ecosystem: "npm"
+    directory: "/"
+    target-branch: "main"
+    schedule:
+      interval: "cron"
+      cronjob: "0 4 * * 1" # Mondays at 04:00
+    cooldown:
+      default-days: 7
+    groups:
+      nuxt:
+        patterns:
+          - "nuxt"
+          - "@nuxt/*"
+          - "@nuxtjs/*"
