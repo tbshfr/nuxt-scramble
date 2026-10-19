@@ -11,6 +11,6 @@ export default createConfigForNuxt({
     stylistic: true,
   },
   dirs: {
-    src: ["./playground"],
+    src: ["./playground", "./test/fixtures/content/app"],
   },
 }).append(prettierConfig);

@@ -4,5 +4,7 @@
     "dist",
     "node_modules",
     "playground",
+    // has its own nuxt context with @nuxt/content auto-imports
+    "test/fixtures/content",
   ]
 }

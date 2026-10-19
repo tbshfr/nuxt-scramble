@@ -65,6 +65,14 @@ Set `autoScramble: true` to enable with default patterns, or pass an object to c
 > [!NOTE]
 > Auto scramble has an performance impact on SSR as it processes all rendered HTML. Only enable it for prerendered/static sites.
 
+### Nuxt Content
+
+When `content` is enabled (disabled by default) and [`@nuxt/content`](https://content.nuxt.com) is installed, emails, phone numbers and custom patterns in your markdown are scrambled at build time through a rehype plugin. Matches are replaced with `<ScrambleText>` nodes that only carry the encoded value, so the plain text never ends up in the content database, the payload or the client side SQL dump, and hydration stays consistent.
+
+- `mailto:`/`tel:` links are scrambled too, custom link labels like `[Mail us](mailto:...)` are kept
+- Uses the patterns from `autoScramble` (or the default patterns), independent of whether `autoScramble` is enabled
+- Code blocks and frontmatter (e.g. `title`, `description`) are not scrambled
+
 ## Configuration
 
 ```typescript
@@ -98,6 +106,9 @@ export default defineNuxtConfig({
 
     // CSS class for scrambled elements (default: 'scrambled')
     className: "scrambled",
+
+    // scramble @nuxt/content markdown at build time (default: false)
+    content: false,
   },
 });
 ```
